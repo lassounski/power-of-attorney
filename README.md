@@ -36,3 +36,6 @@ If the granteeName is non-existent or there are no grants, an empty list is retu
 
 ### Assumptions and thoughts
 * Authorization/Authentication should be in place to allow only users that own their accounts to give grants to other users.
+* Core logic 100% covered by tests
+* When running application locally, understand that the DB is empty and there are no endpoints to register new users.
+* Expected to run on JDK 11
