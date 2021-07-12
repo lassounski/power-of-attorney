@@ -145,4 +145,21 @@ public class PowerOfAttorneyControllerTest {
         assertThat(grantedAccounts).isEmpty();
     }
 
+    @Test
+    void shouldReturn400forSameGranteeAndGrantor() throws Exception{
+        GrantDTO grantDTO = GrantDTO.builder()
+            .granteeAccountNumber("000000001")
+            .grantorAccountNumber("000000002")
+            .authorization(Authorization.READ)
+            .build();
+
+        this.mockMvc.perform(
+            post("/grant")
+                .content(objectMapper.writeValueAsString(grantDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.timestamp", notNullValue()))
+            .andExpect(jsonPath("$.message", equalTo("granteeAccount holder [Kirill Lassounski] should be different from grantorAccount holder")));
+    }
+
 }

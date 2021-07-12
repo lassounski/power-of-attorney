@@ -77,3 +77,4 @@ $ curl -X GET localhost:8080/grantedAccounts/Kirill%20Lassounski
 * Core logic 100% covered by tests.
 * Endpoints with Spring validation for clear communication to the user of the API.
 * Expected to run on JDK 11.
+* Do not execute the integration tests together with the application running since the Embedded MongoDB is the same instance.

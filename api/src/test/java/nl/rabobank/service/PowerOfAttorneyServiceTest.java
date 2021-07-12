@@ -2,6 +2,7 @@ package nl.rabobank.service;
 
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
+import nl.rabobank.exception.AccountNotExistentException;
 import nl.rabobank.exception.InvalidAccountException;
 import nl.rabobank.mongo.repository.PowerOfAttorneyRepository;
 import nl.rabobank.mongo.repository.account.AccountRepository;
@@ -15,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static nl.rabobank.helper.AccountTestData.FREDDY_SAVINGS;
+import static nl.rabobank.helper.AccountTestData.KIRILL_PAYMENTS;
 import static nl.rabobank.helper.AccountTestData.KIRILL_SAVINGS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,6 +54,16 @@ public class PowerOfAttorneyServiceTest {
     @Test
     void shouldThrowWhenAccountNotFound(){
         assertThatThrownBy(() -> powerOfAttorneyService.grantAccess("000000001","000000003", Authorization.READ))
-            .isInstanceOf(InvalidAccountException.class);
+            .isInstanceOf(AccountNotExistentException.class);
+    }
+
+    @Test
+    void shouldNotAllowSameGranteeAndGrantor(){
+        when(accountRepositoryMock.findByAccountNumber("000000001")).thenReturn(Optional.of(KIRILL_SAVINGS));
+        when(accountRepositoryMock.findByAccountNumber("000000002")).thenReturn(Optional.of(KIRILL_PAYMENTS));
+
+        assertThatThrownBy(() -> powerOfAttorneyService.grantAccess("000000001","000000002", Authorization.READ))
+            .isInstanceOf(InvalidAccountException.class)
+            .hasMessage("granteeAccount holder [Kirill Lassounski] should be different from grantorAccount holder");
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import nl.rabobank.account.Account;
 import nl.rabobank.authorizations.Authorization;
 import nl.rabobank.authorizations.PowerOfAttorney;
+import nl.rabobank.exception.AccountNotExistentException;
 import nl.rabobank.exception.InvalidAccountException;
 import nl.rabobank.mongo.repository.PowerOfAttorneyRepository;
 import nl.rabobank.mongo.repository.account.AccountRepository;
@@ -22,8 +23,15 @@ public class PowerOfAttorneyService {
     private final PowerOfAttorneyRepository powerOfAttorneyRepository;
 
     public void grantAccess(String grantorAccountNumber, String granteeAccountNumber, Authorization authorization) {
-        Account granteeAccount = accountRepository.findByAccountNumber(granteeAccountNumber).orElseThrow(() -> new InvalidAccountException(granteeAccountNumber));
-        Account grantorAccount = accountRepository.findByAccountNumber(grantorAccountNumber).orElseThrow(() -> new InvalidAccountException(grantorAccountNumber));
+        Account granteeAccount = accountRepository.findByAccountNumber(granteeAccountNumber)
+            .orElseThrow(() -> new AccountNotExistentException(granteeAccountNumber));
+        Account grantorAccount = accountRepository.findByAccountNumber(grantorAccountNumber)
+            .orElseThrow(() -> new AccountNotExistentException(grantorAccountNumber));
+
+        if (granteeAccount.getAccountHolderName().equals(grantorAccount.getAccountHolderName())) {
+            throw new InvalidAccountException(
+                String.format("granteeAccount holder [%s] should be different from grantorAccount holder", granteeAccount.getAccountHolderName()));
+        }
 
         PowerOfAttorney powerOfAttorney = PowerOfAttorney.builder()
             .granteeName(granteeAccount.getAccountHolderName())

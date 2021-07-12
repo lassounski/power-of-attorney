@@ -35,13 +35,22 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(body, headers, status);
     }
 
+    @ExceptionHandler(value = { AccountNotExistentException.class })
+    protected ResponseEntity<Object> handleInvalidAccount(
+        AccountNotExistentException ex, WebRequest request) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new Date());
+        body.put("message", String.format("Provided account [%s] does not exist",ex.getAccountNumber()));
+        return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(value = { InvalidAccountException.class })
     protected ResponseEntity<Object> handleInvalidAccount(
         InvalidAccountException ex, WebRequest request) {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new Date());
-        body.put("message", String.format("Provided account [%s] does not exist",ex.getAccountNumber()));
-        return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.NOT_FOUND);
+        body.put("message", ex.getMessage());
+        return new ResponseEntity<>(body, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
 }
