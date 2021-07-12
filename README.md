@@ -44,24 +44,33 @@ It will load the following accounts:
 ```
 ### Available endpoints
 #### Grant Access
-POST /grant
+_POST /grant_
 
 Consumes a DTO with the account numbers from grantor, grantee and the authorization value.
 Ex:
 ```
 {
-    "granteeAccountNumber": "000000001",
-    "grantorAccountNumber": "000000003",
-    "authorization": "READ",
+	"granteeAccountNumber": "000000001",
+	"grantorAccountNumber": "000000003",
+	"authorization": "READ"
 }
+```
+#### Example request
+```
+$ curl -d '{"granteeAccountNumber":"000000001", "grantorAccountNumber":"000000003", "authorization":"READ"}' -H "Content-Type: application/json" -X POST http://localhost:8080/grant 
 ```
 If one of the accounts is not present in the DB, a 404 is returned.
 
 #### Retrieve granted accounts
-GET /grantedAccounts/{granteeName}
+_GET /grantedAccounts/{granteeName}_
 
 The name of the grantee is used here because he might have more than one account to his name.
 If the granteeName is non-existent or there are no grants, an empty list is returned.
+
+#### Example request
+```
+$ curl -X GET localhost:8080/grantedAccounts/Kirill%20Lassounski
+```
 
 ### Assumptions and thoughts
 * Authorization/Authentication should be in place to allow only users that own their accounts to give grants to other users.
