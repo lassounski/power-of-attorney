@@ -12,6 +12,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static nl.rabobank.helper.AccountTestData.FREDDY_SAVINGS;
 import static nl.rabobank.helper.AccountTestData.KIRILL_SAVINGS;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,8 +33,8 @@ public class PowerOfAttorneyServiceTest {
 
     @Test
     void shouldGrantPermission(){
-        when(accountRepositoryMock.findByAccountNumber("000000001")).thenReturn(KIRILL_SAVINGS);
-        when(accountRepositoryMock.findByAccountNumber("000000003")).thenReturn(FREDDY_SAVINGS);
+        when(accountRepositoryMock.findByAccountNumber("000000001")).thenReturn(Optional.of(KIRILL_SAVINGS));
+        when(accountRepositoryMock.findByAccountNumber("000000003")).thenReturn(Optional.of(FREDDY_SAVINGS));
 
         powerOfAttorneyService.grantAccess("000000001","000000003", Authorization.READ);
 

@@ -20,8 +20,13 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -76,7 +81,28 @@ public class PowerOfAttorneyControllerTest {
             post("/grant")
                 .content(objectMapper.writeValueAsString(grantDTO))
                 .contentType(MediaType.APPLICATION_JSON)
-        ).andExpect(status().isNotFound());
+        ).andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.timestamp", notNullValue()))
+            .andExpect(jsonPath("$.message", equalTo("Provided account [000000007] does not exist")));
+    }
+
+    @Test
+    void shouldValidateGrantDTOInput() throws Exception{
+        GrantDTO grantDTO = GrantDTO.builder()
+            .granteeAccountNumber("000000003")
+            .grantorAccountNumber(null)
+            .authorization(null)
+            .build();
+
+        this.mockMvc.perform(
+            post("/grant")
+                .content(objectMapper.writeValueAsString(grantDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.timestamp", notNullValue()))
+            .andExpect(jsonPath("$.errors", hasItem("authorization should be provided")))
+            .andExpect(jsonPath("$.errors", hasItem("grantorAccountNumber should not be empty")))
+            .andExpect(jsonPath("$.errors", hasSize(2)));
     }
 
     @Test

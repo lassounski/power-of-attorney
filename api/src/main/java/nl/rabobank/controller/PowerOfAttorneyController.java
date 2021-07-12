@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,7 @@ public class PowerOfAttorneyController {
     private PowerOfAttorneyService powerOfAttorneyService;
 
     @PostMapping(path = "/grant", consumes = "application/json")
-    public void grantAuthorization(@RequestBody GrantDTO grantDTO){
+    public void grantAuthorization(@Valid @RequestBody GrantDTO grantDTO){
         powerOfAttorneyService.grantAccess(grantDTO.getGrantorAccountNumber(),
             grantDTO.getGranteeAccountNumber(),
             grantDTO.getAuthorization());

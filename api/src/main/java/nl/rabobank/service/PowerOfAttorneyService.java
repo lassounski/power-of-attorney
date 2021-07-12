@@ -22,12 +22,8 @@ public class PowerOfAttorneyService {
     private final PowerOfAttorneyRepository powerOfAttorneyRepository;
 
     public void grantAccess(String grantorAccountNumber, String granteeAccountNumber, Authorization authorization) {
-        Account granteeAccount = accountRepository.findByAccountNumber(granteeAccountNumber);
-        Account grantorAccount = accountRepository.findByAccountNumber(grantorAccountNumber);
-
-        if(granteeAccount == null || grantorAccount == null){
-            throw new InvalidAccountException();
-        }
+        Account granteeAccount = accountRepository.findByAccountNumber(granteeAccountNumber).orElseThrow(() -> new InvalidAccountException(granteeAccountNumber));
+        Account grantorAccount = accountRepository.findByAccountNumber(grantorAccountNumber).orElseThrow(() -> new InvalidAccountException(grantorAccountNumber));
 
         PowerOfAttorney powerOfAttorney = PowerOfAttorney.builder()
             .granteeName(granteeAccount.getAccountHolderName())

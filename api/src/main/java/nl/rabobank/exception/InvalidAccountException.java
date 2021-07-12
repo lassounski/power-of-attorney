@@ -1,8 +1,8 @@
 package nl.rabobank.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import lombok.Value;
 
-@ResponseStatus(value= HttpStatus.NOT_FOUND, reason="No such account present")
+@Value
 public class InvalidAccountException extends RuntimeException {
+    private String accountNumber;
 }
