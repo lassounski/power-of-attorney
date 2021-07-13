@@ -8,4 +8,6 @@ import java.util.List;
 public interface PowerOfAttorneyRepository extends MongoRepository<PowerOfAttorney, String> {
 
     List<PowerOfAttorney> findAllByGranteeName(String granteeName);
+
+    List<PowerOfAttorney> findAllByGranteeNameAndGrantorName(String granteeName, String grantorName);
 }

@@ -162,4 +162,27 @@ public class PowerOfAttorneyControllerTest {
             .andExpect(jsonPath("$.message", equalTo("granteeAccount holder [Kirill Lassounski] should be different from grantorAccount holder")));
     }
 
+    @Test
+    void shouldReturn400WhenGrantorGrantsSameAccountTwice() throws Exception{
+        GrantDTO grantDTO = GrantDTO.builder()
+            .granteeAccountNumber("000000003")
+            .grantorAccountNumber("000000001")
+            .authorization(Authorization.READ)
+            .build();
+
+        this.mockMvc.perform(
+            post("/grant")
+                .content(objectMapper.writeValueAsString(grantDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isOk());
+
+        this.mockMvc.perform(
+            post("/grant")
+                .content(objectMapper.writeValueAsString(grantDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+        ).andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.timestamp", notNullValue()))
+            .andExpect(jsonPath("$.message", equalTo("grantor [Kirill Lassounski] already granted account [000000001] to [Freddy Kruger]")));
+    }
+
 }
