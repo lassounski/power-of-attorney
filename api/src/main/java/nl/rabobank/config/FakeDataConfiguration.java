@@ -19,6 +19,7 @@ public class FakeDataConfiguration {
     @PostConstruct
     public void loadData(){
         accountRepository.save(SavingsAccount.builder()
+            .id("1")
             .accountHolderName("Kirill Lassounski")
             .accountNumber("000000001")
             .type("savingsAccount")
@@ -26,6 +27,7 @@ public class FakeDataConfiguration {
             .build());
 
         accountRepository.save(PaymentAccount.builder()
+            .id("2")
             .accountHolderName("Kirill Lassounski")
             .accountNumber("000000002")
             .type("paymentsAccount")
@@ -33,6 +35,7 @@ public class FakeDataConfiguration {
             .build());
 
         accountRepository.save(SavingsAccount.builder()
+            .id("3")
             .accountHolderName("Freddy Kruger")
             .accountNumber("000000003")
             .type("savingsAccount")

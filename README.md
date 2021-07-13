@@ -17,7 +17,7 @@ The application will run on localhost:8080
 There is a configuration class that can initialize some fake data hidden by a Spring profile **fakeData**.
 ```
 $ cd api
-$ mvn spring-boot:run -PfakeData
+$ mvn spring-boot:run -Dspring-boot.run.profiles=fakeData
 ```
 It will load the following accounts:
 ```
