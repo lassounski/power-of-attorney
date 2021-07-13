@@ -29,11 +29,23 @@ public class PowerOfAttorneyService {
         Account grantorAccount = accountRepository.findByAccountNumber(grantorAccountNumber)
             .orElseThrow(() -> new AccountNotExistentException(grantorAccountNumber));
 
-        validateAccounts(granteeAccount, grantorAccount);
+        validateSameHolder(granteeAccount, grantorAccount);
+        validateAlreadyGranted(grantorAccountNumber, granteeAccount, grantorAccount);
 
+        PowerOfAttorney powerOfAttorney = PowerOfAttorney.builder()
+            .granteeName(granteeAccount.getAccountHolderName())
+            .grantorName(grantorAccount.getAccountHolderName())
+            .authorization(authorization)
+            .account(grantorAccount)
+            .build();
+
+        powerOfAttorneyRepository.save(powerOfAttorney);
+    }
+
+    private void validateAlreadyGranted(String grantorAccountNumber, Account granteeAccount, Account grantorAccount) {
         List<PowerOfAttorney> grants = powerOfAttorneyRepository
-            .findAllByGranteeNameAndGrantorName(granteeAccount.getAccountHolderName(), grantorAccount
-                .getAccountHolderName());
+            .findAllByGranteeNameAndGrantorName(granteeAccount.getAccountHolderName(),
+                grantorAccount.getAccountHolderName());
         boolean alreadyGranted = grants.stream()
             .anyMatch(powerOfAttorney -> {
                 if (powerOfAttorney.getGranteeName().equals(granteeAccount.getAccountHolderName()) &&
@@ -50,18 +62,9 @@ public class PowerOfAttorneyService {
                 grantorAccountNumber,
                 granteeAccount.getAccountHolderName());
         }
-
-        PowerOfAttorney powerOfAttorney = PowerOfAttorney.builder()
-            .granteeName(granteeAccount.getAccountHolderName())
-            .grantorName(grantorAccount.getAccountHolderName())
-            .authorization(authorization)
-            .account(grantorAccount)
-            .build();
-
-        powerOfAttorneyRepository.save(powerOfAttorney);
     }
 
-    private void validateAccounts(Account granteeAccount, Account grantorAccount) {
+    private void validateSameHolder(Account granteeAccount, Account grantorAccount) {
         if (granteeAccount.getAccountHolderName().equals(grantorAccount.getAccountHolderName())) {
             throw new InvalidAccountException(
                 String
