@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 })
 public interface Account
 {
+    String getId();
     String getAccountNumber();
     String getAccountHolderName();
     Double getBalance();

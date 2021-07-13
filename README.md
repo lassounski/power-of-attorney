@@ -73,8 +73,9 @@ $ curl -X GET localhost:8080/grantedAccounts/Kirill%20Lassounski
 ```
 
 ### Assumptions and thoughts
-* Authorization/Authentication should be in place to allow only users that own their accounts to give grants to other users.
+* Authorization/Authentication should be in place to allow only users that own their accounts to give grants to other users. Could be implemented using Spring Security's JWT or OAuth2.
 * Core logic 100% covered by tests.
 * Endpoints with Spring validation for clear communication to the user of the API.
 * Expected to run on JDK 11.
 * Do not execute the integration tests together with the application running since the Embedded MongoDB is the same instance.
+* No cascading operations on Account changes are present for simplicity. Thus, in the case of Account balance updates, all the PowerOfAttorney that reference that Account would have to be updated as well.
